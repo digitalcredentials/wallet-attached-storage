@@ -1,5 +1,5 @@
 {
-  "name": "@digitalcredentials/isomorphic-lib-template",
+  "name": "@did-coop/wallet-attached-storage",
   "description": "A Typescript/Javascript isomorphic library template, for use in the browser, Node.js, and React Native.",
   "version": "0.0.1",
   "scripts": {
@@ -58,20 +58,21 @@
     ]
   },
   "keywords": [
-    "dcc"
+    "wallet",
+    "storage"
   ],
   "engines": {
     "node": ">=18.0"
   },
   "author": {
-    "name": "Digital Credentials Consortium",
-    "url": "https://github.com/digitalcredentials/"
+    "name": "DID.coop",
+    "url": "https://github.com/did-coop/"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/digitalcredentials/isomorphic-lib-template"
+    "url": "https://github.com/did-coop/wallet-attached-storage"
   },
-  "homepage": "https://github.com/digitalcredentials/isomorphic-lib-template",
-  "bugs": "https://github.com/digitalcredentials/isomorphic-lib-template/issues"
+  "homepage": "https://github.com/did-coop/wallet-attached-storage",
+  "bugs": "https://github.com/did-coop/wallet-attached-storage/issues"
 }
