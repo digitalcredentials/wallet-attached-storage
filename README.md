@@ -1,9 +1,9 @@
-# Example Isomorphic TS/JS Lib Template _(@did-coop/wallet-attached-storage)_
+# Wallet Attached Storage Client _(@did-coop/wallet-attached-storage)_
 
 [![Build status](https://img.shields.io/github/actions/workflow/status/did-coop/wallet-attached-storage/main.yml?branch=main)](https://github.com/did-coop/wallet-attached-storage/actions?query=workflow%3A%22Node.js+CI%22)
 [![NPM Version](https://img.shields.io/npm/v/@did-coop/wallet-attached-storage.svg)](https://npm.im/@did-coop/wallet-attached-storage)
 
-> A Typescript/Javascript isomorphic library template, for use in the browser, Node.js, and React Native.
+> A Wallet Attached Storage Javascript/TypeScript client for Node, browser and React Native.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@
 
 ## Background
 
-TBD
+See in progress spec: https://did-coop.github.io/wallet-attached-storage-spec/
 
 ## Security
 
