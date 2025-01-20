@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2025 Digital Credentials Consortium. All rights reserved.
+ * Copyright (c) 2025 DID.coop. All rights reserved.
  */
 export class Example {
   public hello (): string {
