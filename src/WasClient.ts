@@ -1,7 +1,7 @@
 /*!
  * Copyright (c) 2025 DID.coop. All rights reserved.
  */
-export class Example {
+export class WasClient {
   public hello (): string {
     return 'world'
   }

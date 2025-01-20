@@ -1,9 +1,9 @@
 import { expect } from 'chai'
-import { Example } from '../src'
+import { WasClient } from '../src'
 
-describe('Example', () => {
+describe('WasClient', () => {
   it('calls function', async () => {
-    const ex = new Example()
+    const ex = new WasClient()
     expect(ex.hello()).to.equal('world')
   })
 })
