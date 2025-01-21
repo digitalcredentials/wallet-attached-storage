@@ -117,7 +117,7 @@ API operation](https://did-coop.github.io/wallet-attached-storage-spec/#create-s
 ```ts
 let space
 try {
-  space = await storage.space('demo-space')
+  space = await storage.space()
 } catch (e) {
   console.error('Error initializing data space:', e)
   throw e
