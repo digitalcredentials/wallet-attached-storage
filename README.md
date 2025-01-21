@@ -32,7 +32,7 @@ usage document, but roughly:
 
 * For in browser **client-only Single Page Applications** (SPAs), the app's
   identity is ephemeral -- essentially a key pair will be generated for each
-  new user session, and stored in the browser's Local Storage.
+  new user session, and stored in the browser.
 
 * For traditional **server side web applications**, it is recommended that the
   app's DID and key pairs are managed securely, on the server side, preferably
