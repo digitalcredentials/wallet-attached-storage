@@ -22,6 +22,7 @@
   "browser": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
   "dependencies": {
+    "@data.pub/fetch-client": "^1.0.1"
   },
   "devDependencies": {
     "@types/chai": "^5.0.1",
