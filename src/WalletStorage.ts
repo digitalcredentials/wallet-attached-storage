@@ -2,12 +2,7 @@
  * Copyright (c) 2025 DID.coop. All rights reserved.
  */
 import { DataPubFetchClient } from '@data.pub/fetch-client'
-import { ISpace } from '@data.pub/fetch-client/lib/types'
-
-export interface ISigner {
-  id?: string
-  sign: (signable: { data: Uint8Array }) => Promise<Uint8Array>
-}
+import { ISpace, ISigner } from '@data.pub/fetch-client/lib/types'
 
 export class WalletStorage {
   // static connect ({ url, signer }: { url: string, signer: ISigner }): ? {
@@ -26,8 +21,8 @@ export class WalletStorage {
     const pub = new DataPubFetchClient(new URL(url))
 
     const space = pub.space({ signer })
-    // Create a new space
-    const spaceResponse = await space.put()
-
+    // Create a new space (sends HTTP API call)
+    await space.put()
+    return space
   }
 }
