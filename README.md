@@ -97,29 +97,18 @@ const loadedKeyPair = localStorage.getItem('app-DID')
 const appDidSigner = Ed25519Signer.fromJSON(loadedKeyPair)
 ```
 
-Create a Wallet Attached Storage Client:
+Create a Wallet Attached Storage Client, connect it to a remote url:
 
 ```ts
-import { WasClient } from '@did-coop/wallet-attached-storage'
+import { WalletStorage } from '@did-coop/wallet-attached-storage'
 
-const config = {
-  was: {
-    url: 'https://data.pub'
-  }
-}
+const url = 'https://data.pub' // load this from config
 
-const storage = new WasClient({ url: config.was.url, signer: appDidSigner })
-```
-
-Provision (create and set up) a Data Space (this performs a [Create Space HTTP
-API operation](https://did-coop.github.io/wallet-attached-storage-spec/#create-space-operation)):
-
-```ts
-let space
+let storage
 try {
-  space = await storage.space()
+  storage = WalletStorage.connect({ url, signer: appDidSigner })
 } catch (e) {
-  console.error('Error initializing data space:', e)
+  console.error('Error connecting:', e)
   throw e
 }
 ```
@@ -127,18 +116,25 @@ try {
 Now you can read and write resources to and from collections:
 
 ```ts
-// Create a request to list the contents of the 'credentials' collection
-const cursor = space.collection('credentials').list()
+// Create a reference to the Credentials collection (note that no API calls are
+//   made yet)
+const credentials = storage.collection('credentials')
 
-// Iterate through the results
-for await (const vc of cursor) {
-  console.log(vc);
+// Iterate through the collection, fetch the resources
+for await (const resource of credentials) {
+  const response = await resource.get()
+  const vc = await response.json()
+  console.log(JSON.stringify(vc, null, 2))
 }
-// or cast the results to an array
-const allItems = await cursor.toArray()
 
-// Write a VC to a collection
-const { url } = await space.collection('credentials').put(myVc)
+// Upload a VC
+await credentials.resource().put(
+  new Blob(JSON.stringify(vc), { type: 'application/vc' })
+)
+
+// Upload Evidence / Documents
+await storage.collection('documents')
+  .resource().put(getDocumentBlob())
 ```
 
 ## Contribute
