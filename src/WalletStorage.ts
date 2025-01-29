@@ -2,8 +2,9 @@
  * Copyright (c) 2025 DID.coop. All rights reserved.
  */
 import { DataPubFetchClient } from '@data.pub/fetch-client'
-import { ISpace, ISigner } from '@data.pub/fetch-client/lib/types'
+import { ISigner, ISpace } from '@data.pub/fetch-client/types'
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class WalletStorage {
   // static connect ({ url, signer }: { url: string, signer: ISigner }): ? {
   // }
