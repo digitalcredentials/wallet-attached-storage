@@ -34,6 +34,7 @@
     "@did.coop/did-key-ed25519": "^0.0.9",
     "@types/node": "^22.10.2",
     "glob": "^11.0.0",
+    "sshpk": "^1.18.0",
     "tsx": "^4.19.2",
     "typescript": "^5.8.3"
   },
