@@ -9,7 +9,7 @@ export type UrnUuid = `urn:uuid:${string}`
  */
 export function isUrnUuid (v: unknown): v is UrnUuid {
   if (typeof v !== 'string') return false
-  if ( ! v.startsWith('urn:uuid:')) return false
+  if (!v.startsWith('urn:uuid:')) return false
   return true
 }
 
@@ -23,10 +23,10 @@ export function parseUrnUuid (v: string) {
   const pattern = /urn:uuid:(?<uuid>[^:]+)/
   const match = v.match(pattern)
   const uuid = match?.groups?.uuid
-  if ( ! uuid) {
+  if (!uuid) {
     throw new Error(`unable to parse uuid from ${v}`)
   }
   return {
-    uuid,
+    uuid
   }
 }

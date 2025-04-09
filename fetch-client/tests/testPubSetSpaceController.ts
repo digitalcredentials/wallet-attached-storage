@@ -13,7 +13,7 @@ import { StorageClient } from "../index.js"
 import assert from "assert"
 
 /**
- * test a DataPub to ensure it can update spaces
+ * test a StorageClient to ensure it can update spaces
  * @param pub - pub to test
  * @param assert - assertion library
  * @param testing - testing library
@@ -83,9 +83,9 @@ const isMain = () => {
 }
 
 if (isMain()) {
-  const datapubUrlString = process.argv[2] ?? process.env.DATAPUB_URL ?? 'https://data.pub'
-  await NodeTest.test(`can use fetch-client to set space controller at ${datapubUrlString}`, async t => {
-    const pub = new StorageClient(new URL(datapubUrlString))
+  const storageUrlString = process.argv[2] ?? process.env.STORAGE_URL ?? 'https://data.pub'
+  await NodeTest.test(`can use fetch-client to set space controller at ${storageUrlString}`, async t => {
+    const pub = new StorageClient(new URL(storageUrlString))
     await testSetSpaceController(
       pub,
       assert,

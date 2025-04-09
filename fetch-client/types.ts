@@ -19,7 +19,7 @@ export interface IStorageClient {
    * @param options - if a string, the string must be options.id
    * @param options.id - id of space to create
    */
-  space(options?: UrnUuid | ({ id?: UrnUuid } & ISignedRequestOptions)): ISpace
+  space: (options?: UrnUuid | ({ id?: UrnUuid } & ISignedRequestOptions)) => ISpace
 }
 
 export interface IResponse {
@@ -29,15 +29,15 @@ export interface IResponse {
   /**
    * other named data included in the response
    */
-  headers: Iterable<[name:string,value:string]>
+  headers: Iterable<[name:string, value:string]>
   /**
    * get a representation of the resource as a Blob.
    */
-  blob?(): Promise<Blob>
+  blob?: () => Promise<Blob>
   /**
    * if this.blob is JSON, return the result of parsing it.
    */
-  json?(): Promise<unknown>
+  json?: () => Promise<unknown>
 }
 
 /**
@@ -52,19 +52,19 @@ export type ErrorResponse =
 | IUnauthorizedResponse
 
 export interface Getable {
-  get(options?: ISignedRequestOptions): Promise<IResponse | ErrorResponse>
+  get: (options?: ISignedRequestOptions) => Promise<IResponse | ErrorResponse>
 }
 
 interface Putable {
-  put(blob?: Blob, options?: ISignedRequestOptions): Promise<IResponse | ErrorResponse>
+  put: (blob?: Blob, options?: ISignedRequestOptions) => Promise<IResponse | ErrorResponse>
 }
 
 interface Deletable {
-  delete(options?: ISignedRequestOptions): Promise<IResponse | ErrorResponse>
+  delete: (options?: ISignedRequestOptions) => Promise<IResponse | ErrorResponse>
 }
 
 interface Postable {
-  post(blob?: Blob, options?: ISignedRequestOptions): Promise<IResponse | ErrorResponse>
+  post: (blob?: Blob, options?: ISignedRequestOptions) => Promise<IResponse | ErrorResponse>
 }
 
 /**
@@ -74,7 +74,7 @@ interface Postable {
  */
 export interface ISpace extends Getable, Putable, Deletable {
   id: UrnUuid
-  resource(path?: string): IResourceInSpace
+  resource: (path?: string) => IResourceInSpace
 }
 
 /**
@@ -123,5 +123,5 @@ export interface ISigner {
    * @param signable - what to sign
    * @param signable.data - binary data to be signed
    */
-  sign(signable: { data: Uint8Array }): Promise<Uint8Array>
+  sign: (signable: { data: Uint8Array }) => Promise<Uint8Array>
 }

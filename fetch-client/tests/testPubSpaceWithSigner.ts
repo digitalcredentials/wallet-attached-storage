@@ -10,7 +10,7 @@ import type nodeAssert from "node:assert";
  * @param pub - pub to test
  * @param fetch - Fetch API implementation
  * @param assert - assertion library
- * @param signer - creates signature for datapub requests
+ * @param signer - creates signature for requests
  * @param testing - testing library
  * @param testing.test - add a test
  */

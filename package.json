@@ -5,12 +5,12 @@
   "scripts": {
     "build": "npm run clear && tsc -d && tsc -p tsconfig.esm.json",
     "clear": "rimraf dist/*",
-    "lint": "ts-standard --fix --project tsconfig.spec.json",
+    "lint": "ts-standard --fix --project tsconfig.spec.json src/**/*.ts test/**/*.ts",
     "prepare": "npm run build",
     "rebuild": "npm run clear && npm run build",
     "test": "npm run lint && npm run test-node && npm run test-karma",
     "test-karma": "karma start",
-    "test-node": "cross-env NODE_ENV=test TS_NODE_PROJECT=tsconfig.spec.json TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register --project tsconfig.spec.json 'test/*.ts'"
+    "test-node": "cross-env NODE_ENV=test TS_NODE_PROJECT=tsconfig.spec.json TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register --project tsconfig.spec.json --extensions 'ts' 'test/*.ts'"
   },
   "files": [
     "dist",
@@ -41,7 +41,7 @@
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.1",
     "ts-standard": "^12.0.2",
-    "typescript": "5.2.2"
+    "typescript": "^5.2.2"
   },
   "publishConfig": {
     "access": "public"

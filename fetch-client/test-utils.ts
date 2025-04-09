@@ -8,7 +8,7 @@ import { isValidActivityPubMediaType } from "./activitypub.js"
  * perform generic testing on the provided pub
  * @param pub - pub to test
  */
-export async function testDataPub(pub: IStorageClient) {
+export async function testStorageClient(pub: IStorageClient) {
   const space = pub.space()
   const resource = space.resource()
 
@@ -57,7 +57,7 @@ function getCollectionFromMap(mapPathToBlob: Map<string,Blob>, collectionPath: s
 
 /**
  * use node:test mock to create a mocked Fetch API instance that can be used to
- * test DataPub client HTTP requests without actually hitting the network.
+ * test Storage client HTTP requests without actually hitting the network.
  * Instead, the data is read/write to/from a Map
  * @param mapPathToBlob - map to use to read/write data
  * @returns mocked fetch

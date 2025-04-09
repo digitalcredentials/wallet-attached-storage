@@ -1,11 +1,11 @@
 /** @file client that makes requests using fetch + storage HTTP API */
 
-import shapeOfCollectionGetFromJson from "./shapes/CollectionGetResponseBody.js"
-import type { IStorageClient, IResourceInSpace, IResponse, ISigner, ISpace, ISignedRequestOptions, ErrorResponse } from "./types.js"
-import { isUrnUuid, parseUrnUuid } from "./urn-uuid.js"
-import type {UrnUuid} from "./urn-uuid.js"
-import { createHttpSignatureAuthorization } from "authorization-signature"
-import { ACTIVITYPUB_MEDIA_TYPE } from "./activitypub.js"
+import shapeOfCollectionGetFromJson from './shapes/CollectionGetResponseBody.js'
+import type { IStorageClient, IResourceInSpace, IResponse, ISigner, ISpace, ISignedRequestOptions, ErrorResponse } from './types.js'
+import { isUrnUuid, parseUrnUuid } from './urn-uuid.js'
+import type { UrnUuid } from './urn-uuid.js'
+import { createHttpSignatureAuthorization } from 'authorization-signature'
+import { ACTIVITYPUB_MEDIA_TYPE } from './activitypub.js'
 
 /**
  * async iterate the items in a remote Storage Collection via fetch
@@ -15,55 +15,55 @@ import { ACTIVITYPUB_MEDIA_TYPE } from "./activitypub.js"
  * @param options.signer - will sign requests (e.g. with a digital signature algorithm)
  * @yields {{name:string,url:string}} Use this to iterate each item in the collection
  */
-async function * iterateCollectionItems(options: {
-  path: `/space/${string}/resource/${string}`,
-  fetch: typeof globalThis.fetch,
+async function * iterateCollectionItems (options: {
+  path: `/space/${string}/resource/${string}`
+  fetch: typeof globalThis.fetch
   signer?: ISigner
 }) {
   const headers = {}
   const method = 'GET' as const
   const location = options.path
   const signer = options.signer
-  const authorization = signer
+  const authorization = (signer != null)
     ? await createHttpSignatureAuthorization({
-        signer,
-        method,
-        headers,
-        includeHeaders: [],
-        created: new Date,
-        url: new URL(
-          location,
-          // the host will not be used in the authorization
-          // unless the options want it to be.
-          'https://example.example'),
-      })
+      signer,
+      method,
+      headers,
+      includeHeaders: [],
+      created: new Date(),
+      url: new URL(
+        location,
+        // the host will not be used in the authorization
+        // unless the options want it to be.
+        'https://example.example')
+    })
     : undefined
   const requestInit = {
     method,
     headers: {
       accept: ACTIVITYPUB_MEDIA_TYPE,
       ...headers,
-      ...(authorization && { authorization }),
-    },
+      ...(authorization && { authorization })
+    }
   }
   const initialCollectionResponse = await options.fetch(options.path, requestInit)
-  if ( ! initialCollectionResponse.ok) {
-    switch(initialCollectionResponse.status) {
+  if (!initialCollectionResponse.ok) {
+    switch (initialCollectionResponse.status) {
       case 404:
-        throw new Error(`failed to iterate collection items because collection not found`, {
-          cause: initialCollectionResponse,
+        throw new Error('failed to iterate collection items because collection not found', {
+          cause: initialCollectionResponse
         })
       default:
-        throw new Error(`failed to iterate collection items because initialCollectionResponse not ok`, {
-          cause: initialCollectionResponse,
+        throw new Error('failed to iterate collection items because initialCollectionResponse not ok', {
+          cause: initialCollectionResponse
         })
     }
   }
   const collectionFromJSON = await initialCollectionResponse.json()
   const initialCollectionSafeParsed = shapeOfCollectionGetFromJson.safeParse(collectionFromJSON)
-  if (initialCollectionSafeParsed.error) {
+  if (initialCollectionSafeParsed.error != null) {
     console.debug('invalid collectionFromJSON', collectionFromJSON)
-    throw new Error(`unexpected collection fetched to start iterateCollectionItems`, {
+    throw new Error('unexpected collection fetched to start iterateCollectionItems', {
       cause: initialCollectionSafeParsed.error
     })
   }
@@ -73,13 +73,15 @@ async function * iterateCollectionItems(options: {
 
 export class StorageURLPath {
   #parsed: {
-    spacePath: `/space/${string}`,
-    resourcePath: string,
+    spacePath: `/space/${string}`
+    resourcePath: string
   }
-  constructor(path: string) {
+
+  constructor (path: string) {
     this.#parsed = parsePath(path)
   }
-  toString(): `/space/${string}/resource/${string}` {
+
+  toString (): `/space/${string}/resource/${string}` {
     return `${this.#parsed.spacePath}/resource/${this.#parsed.resourcePath}` as const
   }
 }
@@ -93,20 +95,22 @@ export class StorageURLPath {
  * @throws if unable to parse resource path to space path
  * @throws if unable to parse resource path to resource path within space
  */
-function parsePath<SpaceUUID extends string, ResourcePath extends string>(resource: `/space/${SpaceUUID}/resource/${ResourcePath}` | string): { spacePath: `/space/${SpaceUUID}`, resourcePath: ResourcePath } {
+function parsePath<SpaceUUID extends string, ResourcePath extends string> (resource: `/space/${SpaceUUID}/resource/${ResourcePath}` | string): { spacePath: `/space/${SpaceUUID}`, resourcePath: ResourcePath } {
   const match = resource.match(/(?<spacePath>\/space\/[^/]+)(?<resourcePath>.*)/)
-  if ( ! match) throw new Error(`unable to parse space path from resource path`, {
-    cause: {
-      resource,
-    }
-  })
+  if (match == null) {
+    throw new Error('unable to parse space path from resource path', {
+      cause: {
+        resource
+      }
+    })
+  }
   const spacePath = match.groups?.spacePath as (undefined | `/space/${SpaceUUID}`)
-  if ( ! spacePath) throw new Error(`unable to determine spacePath`)
+  if (!spacePath) throw new Error('unable to determine spacePath')
   const resourcePath = match.groups?.resourcePath as (undefined | ResourcePath)
   if (typeof resourcePath !== 'string') {
-    throw new Error(`unable to parse resourcePath`, {
+    throw new Error('unable to parse resourcePath', {
       cause: {
-        path: resource,
+        path: resource
       }
     })
   }
@@ -114,156 +118,160 @@ function parsePath<SpaceUUID extends string, ResourcePath extends string>(resour
 }
 
 class ResourceFetched implements IResourceInSpace {
-  type = "Resource" as const
+  type = 'Resource' as const
   #fetch: typeof globalThis.fetch
   path: `/space/${string}/resource/${string}`
   #signer?: ISigner
-  constructor(options: {
+  constructor (options: {
     path: `/space/${string}/resource/${string}`
-    fetch: typeof globalThis.fetch,
+    fetch: typeof globalThis.fetch
     signer?: ISigner
   }) {
     this.#fetch = options.fetch
     this.path = options.path
     this.#signer = options.signer
   }
-  async get(options: {
+
+  async get (options: {
     signer?: ISigner
-  }={}): Promise<IResponse | ErrorResponse> {
+  } = {}): Promise<IResponse | ErrorResponse> {
     const headers = {}
     const method = 'GET' as const
     const location = this.path
     const signer = options.signer ?? this.#signer
-    const authorization = signer
+    const authorization = (signer != null)
       ? await createHttpSignatureAuthorization({
-          signer,
-          method,
-          headers,
-          includeHeaders: [],
-          created: new Date,
-          url: new URL(
-            location,
-            // the host will not be used in the authorization
-            // unless the options want it to be.
-            'https://example.example'),
-        })
+        signer,
+        method,
+        headers,
+        includeHeaders: [],
+        created: new Date(),
+        url: new URL(
+          location,
+          // the host will not be used in the authorization
+          // unless the options want it to be.
+          'https://example.example')
+      })
       : undefined
     const response = await this.#fetch(location, {
       method,
       headers: {
         ...headers,
-        ...(authorization && { authorization }),
+        ...(authorization && { authorization })
       }
     })
     const got: IResponse = {
       status: response.status,
       ok: response.ok,
-      async blob() { return response.clone().blob() },
-      json() { return response.clone().json() },
-      headers: response.headers,
+      async blob () { return await response.clone().blob() },
+      async json () { return await response.clone().json() },
+      headers: response.headers
     }
     return got
   }
-  async post(blob?: Blob, options: {
+
+  async post (blob?: Blob, options: {
     signer?: ISigner
-  }={}) {
+  } = {}) {
     const headers = {}
     const method = 'POST' as const
     const location = this.path
     const signer = options.signer ?? this.#signer
-    const authorization = signer
+    const authorization = (signer != null)
       ? await createHttpSignatureAuthorization({
-          signer,
-          method,
-          headers,
-          includeHeaders: [],
-          created: new Date,
-          url: new URL(
-            location,
-            // the host will not be used in the authorization
-            // unless the options want it to be.
-            'https://example.example'),
-        })
+        signer,
+        method,
+        headers,
+        includeHeaders: [],
+        created: new Date(),
+        url: new URL(
+          location,
+          // the host will not be used in the authorization
+          // unless the options want it to be.
+          'https://example.example')
+      })
       : undefined
     const response = await this.#fetch(location, {
       method,
       body: blob,
       headers: {
         ...headers,
-        ...(authorization && { authorization }),
+        ...(authorization && { authorization })
       }
     })
     return {
       ok: response.ok,
       headers: Array.from(response.headers),
       status: response.status,
-      async blob() { return response.clone().blob() },
-      json() { return response.clone().json() },
+      async blob () { return await response.clone().blob() },
+      async json () { return await response.clone().json() }
     }
   }
-  async put(blob?: Blob, options: {
+
+  async put (blob?: Blob, options: {
     signer?: ISigner
-  }={}) {
+  } = {}) {
     const headers = {}
     const method = 'PUT' as const
     const location = this.path
     const signer = options.signer ?? this.#signer
-    const authorization = signer
+    const authorization = (signer != null)
       ? await createHttpSignatureAuthorization({
-          signer,
-          method,
-          headers,
-          includeHeaders: [],
-          created: new Date,
-          url: new URL(
-            location,
-            // the host will not be used in the authorization
-            // unless the options want it to be.
-            'https://example.example'),
-        })
+        signer,
+        method,
+        headers,
+        includeHeaders: [],
+        created: new Date(),
+        url: new URL(
+          location,
+          // the host will not be used in the authorization
+          // unless the options want it to be.
+          'https://example.example')
+      })
       : undefined
     const response = await this.#fetch(location, {
       method,
       body: blob,
       headers: {
         ...headers,
-        ...(authorization && { authorization }),
+        ...(authorization && { authorization })
       }
     })
     return {
       ok: response.ok,
       headers: Array.from(response.headers),
       status: response.status,
-      async blob() { return response.clone().blob() },
-      json() { return response.clone().json() },
+      async blob () { return await response.clone().blob() },
+      async json () { return await response.clone().json() }
     }
   }
-  async delete(options: {
+
+  async delete (options: {
     signer?: ISigner
-  }={}) {
+  } = {}) {
     const headers = {}
     const method = 'DELETE' as const
     const location = this.path
     const signer = options.signer ?? this.#signer
-    const authorization = signer
+    const authorization = (signer != null)
       ? await createHttpSignatureAuthorization({
-          signer,
-          method,
-          headers,
-          includeHeaders: [],
-          created: new Date,
-          url: new URL(
-            location,
-            // the host will not be used in the authorization
-            // unless the options want it to be.
-            'https://example.example'),
-        })
+        signer,
+        method,
+        headers,
+        includeHeaders: [],
+        created: new Date(),
+        url: new URL(
+          location,
+          // the host will not be used in the authorization
+          // unless the options want it to be.
+          'https://example.example')
+      })
       : undefined
     const response = await this.#fetch(this.path, {
       method,
       headers: {
         ...headers,
-        ...(authorization && { authorization }),
+        ...(authorization && { authorization })
       }
     })
     return response
@@ -275,26 +283,28 @@ class SpaceFetched implements ISpace {
   #space: {
     id: UrnUuid
   }
+
   // #added: Promise<void>
   #signer?: ISigner
-  constructor(options: {
-    space: string,
-    fetch: typeof globalThis.fetch,
-    signer?: ISigner,
+  constructor (options: {
+    space: string
+    fetch: typeof globalThis.fetch
+    signer?: ISigner
   }) {
     if (!isUrnUuid(options.space)) {
-      throw new Error(`expected options.space to be a urn:uuid`, {
+      throw new Error('expected options.space to be a urn:uuid', {
         cause: {
-          space: options.space,
+          space: options.space
         }
       })
     }
     this.#space = {
-      id: options.space,
+      id: options.space
     }
     this.#fetch = options.fetch
     this.#signer = options.signer
   }
+
   // // add this space to the remote repo
   // async #addSpace(options: {
   //   signer?: ISigner,
@@ -344,9 +354,9 @@ class SpaceFetched implements ISpace {
   //       })
   //   }
   // }
-  resource(resourcePathParam?: string, options:{
-    signer?:ISigner
-  }={}) {
+  resource (resourcePathParam?: string, options: {
+    signer?: ISigner
+  } = {}) {
     let resourcePath: `/${string}`
     if (typeof resourcePathParam === 'undefined') {
       resourcePath = `/${crypto.randomUUID()}` as const
@@ -357,155 +367,162 @@ class SpaceFetched implements ISpace {
         resourcePath = `/${resourcePathParam}`
       }
     } else {
-      throw new Error(`unexpected resource path parameter`, { cause: {resourcePathParam}})
+      throw new Error('unexpected resource path parameter', { cause: { resourcePathParam } })
     }
     const signer = options.signer ?? this.#signer
     const path = `${this.path}/resource${resourcePath}` as const
     return new ResourceFetched({
       fetch: this.#fetch,
       path,
-      signer,
+      signer
     })
   }
-  get id() {
+
+  get id () {
     return this.#space.id
   }
-  get uuid() {
+
+  get uuid () {
     return parseUrnUuid(this.id).uuid
   }
-  get path() {
+
+  get path () {
     return `/space/${this.uuid}` as const
   }
+
   // get added() {
   //   return this.#added
   // }
-  async get(options:ISignedRequestOptions={}): Promise<IResponse> {
+  async get (options: ISignedRequestOptions = {}): Promise<IResponse> {
     const headers = {}
     const method = 'GET' as const
     const location = this.path
     const signer = options.signer ?? this.#signer
-    const authorization = signer
+    const authorization = (signer != null)
       ? await createHttpSignatureAuthorization({
-          signer,
-          method,
-          headers,
-          includeHeaders: [],
-          created: new Date,
-          url: new URL(
-            location,
-            // the host will not be used in the authorization
-            // unless the options want it to be.
-            'https://example.example'),
-        })
+        signer,
+        method,
+        headers,
+        includeHeaders: [],
+        created: new Date(),
+        url: new URL(
+          location,
+          // the host will not be used in the authorization
+          // unless the options want it to be.
+          'https://example.example')
+      })
       : undefined
     const requestInit = {
       method,
       headers: {
         ...headers,
-        ...(authorization && { authorization }),
-      },
+        ...(authorization && { authorization })
+      }
     }
     const response = await this.#fetch(this.path, requestInit)
-    const r: IResponse & {status:number} = {
+    const r: IResponse & { status: number } = {
       status: response.status,
       ok: response.ok,
       headers: response.headers,
       blob: async () => {
-        return response.clone().blob()
+        return await response.clone().blob()
       },
-      async json() {
+      async json () {
         const text = await response.clone().text()
         return JSON.parse(text)
       }
     }
     return r
   }
-  async delete(options:ISignedRequestOptions={}) {
+
+  async delete (options: ISignedRequestOptions = {}) {
     const headers = {}
     const method = 'DELETE' as const
     const location = this.path
     const signer = options.signer ?? this.#signer
-    const authorization = signer
+    const authorization = (signer != null)
       ? await createHttpSignatureAuthorization({
-          signer,
-          method,
-          headers,
-          includeHeaders: [],
-          created: new Date,
-          url: new URL(
-            location,
-            // the host will not be used in the authorization
-            // unless the options want it to be.
-            'https://example.example'),
-        })
+        signer,
+        method,
+        headers,
+        includeHeaders: [],
+        created: new Date(),
+        url: new URL(
+          location,
+          // the host will not be used in the authorization
+          // unless the options want it to be.
+          'https://example.example')
+      })
       : undefined
     const requestInit = {
       method,
       headers: {
         ...headers,
-        ...(authorization && { authorization }),
-      },
+        ...(authorization && { authorization })
+      }
     }
     const response = await this.#fetch(this.path, requestInit)
     return response
   }
-  async post(blob:Blob, options?:ISignedRequestOptions): Promise<IResponse> {
+
+  async post (blob: Blob, options?: ISignedRequestOptions): Promise<IResponse> {
     const headers = {}
     const method = 'POST' as const
     const location = this.path
     const signer = options?.signer ?? this.#signer
-    const authorization = signer
+    const authorization = (signer != null)
       ? await createHttpSignatureAuthorization({
-          signer,
-          method,
-          headers,
-          includeHeaders: [],
-          created: new Date,
-          url: new URL(
-            location,
-            // the host will not be used in the authorization
-            // unless the options want it to be.
-            'https://example.example'),
-        })
+        signer,
+        method,
+        headers,
+        includeHeaders: [],
+        created: new Date(),
+        url: new URL(
+          location,
+          // the host will not be used in the authorization
+          // unless the options want it to be.
+          'https://example.example')
+      })
       : undefined
     const requestInit = {
       body: blob,
       method,
       headers: {
         ...headers,
-        ...(authorization && { authorization }),
-      },
+        ...(authorization && { authorization })
+      }
     }
     console.debug('SpaceFetched#post sending request', this.path, requestInit)
     const response = await this.#fetch(this.path, requestInit)
     return response
   }
-  async put(blob?:Blob, options?:ISignedRequestOptions): Promise<IResponse> {
+
+  async put (blob?: Blob, options?: ISignedRequestOptions): Promise<IResponse> {
     const headers = {}
     const method = 'PUT' as const
     const location = this.path
     const signer = options?.signer ?? this.#signer
-    const authorization = signer
+    const authorization = (signer != null)
       ? await createHttpSignatureAuthorization({
-          signer,
-          method,
-          headers,
-          includeHeaders: [],
-          created: new Date,
-          url: new URL(
-            location,
-            // the host will not be used in the authorization
-            // unless the options want it to be.
-            'https://example.example'),
-        })
+        signer,
+        method,
+        headers,
+        includeHeaders: [],
+        created: new Date(),
+        url: new URL(
+          location,
+          // the host will not be used in the authorization
+          // unless the options want it to be.
+          'https://example.example')
+      })
       : undefined
     const requestInit: RequestInit = {
       body: blob,
       method,
       headers: {
         ...headers,
-        ...(authorization && { authorization }),
-      },
+        ...(authorization && { authorization })
+      }
     }
     const response = await this.#fetch(this.path, requestInit)
     const responseClone = response.clone()
@@ -517,24 +534,25 @@ type FetchPath = (path: string, init: RequestInit) => Promise<Response>
 
 class StorageFetched implements IStorageClient {
   #fetch: typeof globalThis.fetch
-  constructor(options: URL | {
+  constructor (options: URL | {
     fetch: typeof globalThis.fetch
   }) {
     if (options instanceof URL) {
       const baseURL = options
-      this.#fetch = function (location: string|URL|Request, init?: RequestInit) {
-        if (typeof location === "string") {
+      this.#fetch = async function (location: string | URL | Request, init?: RequestInit) {
+        if (typeof location === 'string') {
           location = new URL(location, baseURL)
         }
-        return globalThis.fetch(location, init)
+        return await globalThis.fetch(location, init)
       }
     } else {
       this.#fetch = options.fetch
     }
   }
-  space(optionsOrId?: Parameters<IStorageClient['space']>[0]) {
+
+  space (optionsOrId?: Parameters<IStorageClient['space']>[0]) {
     let options: {
-      id: UrnUuid,
+      id: UrnUuid
       signer?: ISigner
     }
     let spaceId: UrnUuid
@@ -554,7 +572,7 @@ class StorageFetched implements IStorageClient {
     return new SpaceFetched({
       fetch: this.#fetch,
       space: options.id,
-      signer: options.signer,
+      signer: options.signer
     })
   }
 }

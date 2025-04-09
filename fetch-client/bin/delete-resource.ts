@@ -33,7 +33,7 @@ const {
 });
 
 let spaceId: UrnUuid | undefined
-const dataPubURL: URL | undefined = values.url ? new URL(values.url) : undefined
+const storageServerURL: URL | undefined = values.url ? new URL(values.url) : undefined
 
 for (const token of tokens) {
   switch (token.kind) {
@@ -56,11 +56,11 @@ for (const token of tokens) {
 if (!spaceId) {
   throw new Error(`unable to determine space id`)
 }
-if (!dataPubURL) {
-  throw new Error(`unable to determine dataPubURL`)
+if (!storageServerURL) {
+  throw new Error(`unable to determine storageServerURL`)
 }
 
-const pub = new StorageClient(dataPubURL)
+const pub = new StorageClient(storageServerURL)
 const space = pub.space(spaceId)
 const resource = space.resource(values.resource)
 
