@@ -1,5 +1,5 @@
 {
-  "name": "@did-coop/wallet-attached-storage",
+  "name": "@did.coop/wallet-attached-storage",
   "description": "A Typescript/Javascript isomorphic library template, for use in the browser, Node.js, and React Native.",
   "version": "0.1.0",
   "scripts": {
