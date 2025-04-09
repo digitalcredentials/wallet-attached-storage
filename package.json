@@ -78,6 +78,7 @@
   "bugs": "https://github.com/did-coop/wallet-attached-storage/issues",
   "workspaces": {
     "packages": [
+      ".",
       "fetch-client"
     ]
   }
