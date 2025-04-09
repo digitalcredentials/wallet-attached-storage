@@ -22,7 +22,7 @@
   "browser": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
   "dependencies": {
-    "@data.pub/fetch-client": "^1.1.2"
+    "@wallet.storage/fetch-client": "*"
   },
   "devDependencies": {
     "@types/chai": "^5.0.1",
@@ -75,5 +75,10 @@
     "url": "https://github.com/did-coop/wallet-attached-storage"
   },
   "homepage": "https://github.com/did-coop/wallet-attached-storage",
-  "bugs": "https://github.com/did-coop/wallet-attached-storage/issues"
+  "bugs": "https://github.com/did-coop/wallet-attached-storage/issues",
+  "workspaces": {
+    "packages": [
+      "fetch-client"
+    ]
+  }
 }

@@ -1,0 +1,52 @@
+{
+  "name": "@wallet.storage/fetch-client",
+  "type": "module",
+  "version": "1.1.2",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./lib/index.js"
+    },
+    "./test-utils": {
+      "types": "./test-utils.ts",
+      "default": "./lib/test-utils.js"
+    },
+    "./types": {
+      "types": "./types.ts",
+      "default": "./lib/types.js"
+    }
+  },
+  "scripts": {
+    "byexample": "byexample -l javascript README.md",
+    "lint": "eslint --ignore-pattern=lib .",
+    "prepare": "npm run tsc",
+    "test": "glob -c 'node --import tsx --test' '**/*.test.ts'",
+    "tsc": "tsc --build"
+  },
+  "dependencies": {
+    "authorization-signature": "^1.0.3",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@data.pub/did-sshpk": "^0.0.5",
+    "@did.coop/did-key-ed25519": "^0.0.9",
+    "@eslint/js": "^9.18.0",
+    "@types/node": "^22.10.2",
+    "eslint-plugin-jsdoc": "^50.6.1",
+    "glob": "^11.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.20.0"
+  },
+  "files": [
+    "README.md",
+    "lib",
+    "**/*.ts"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
