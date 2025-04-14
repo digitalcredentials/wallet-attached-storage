@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "authorization-signature": "^1.0.3",
+    "uuid": "^11.1.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {

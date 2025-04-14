@@ -11,6 +11,7 @@ import { getControllerOfDidKeyVerificationMethod } from "../did-key.js"
 import { fileURLToPath } from "url"
 import { StorageClient } from "../index.js"
 import assert from "assert"
+import { v4 as uuidv4 } from "uuid"
 
 /**
  * test a StorageClient to ensure it can update spaces
@@ -39,7 +40,7 @@ export default async function testSetSpaceController(
   */
    {
     // create space b
-    const spaceBUuid = crypto.randomUUID()
+    const spaceBUuid = uuidv4()
     const spaceBObject = {
       id: `urn:uuid:${spaceBUuid}` as UrnUuid,
     }
