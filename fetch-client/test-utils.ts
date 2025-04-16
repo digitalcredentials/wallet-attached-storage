@@ -3,18 +3,17 @@ import assert from "node:assert"
 import { IStorageClient } from "./types.js"
 import { isUrnUuid, parseUrnUuid } from "./urn-uuid.js"
 import { isValidActivityPubMediaType } from "./activitypub.js"
-import { v4 as uuidv4 } from "uuid"
 
 /**
  * perform generic testing on the provided pub
  * @param pub - pub to test
  */
-export async function testStorageClient(pub: IStorageClient) {
+export async function testStorageClient(pub: IStorageClient, uuid?: string) {
   const space = pub.space()
   const resource = space.resource()
 
   // store a message
-  const nonce = uuidv4()
+  const nonce = uuid || crypto.randomUUID()
   const message = new Blob([nonce],{type:'text/plain'})
   await resource.put(message)
 

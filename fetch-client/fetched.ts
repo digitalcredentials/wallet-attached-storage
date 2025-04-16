@@ -6,7 +6,6 @@ import { isUrnUuid, parseUrnUuid } from './urn-uuid.js'
 import type { UrnUuid } from './urn-uuid.js'
 import { createHttpSignatureAuthorization } from 'authorization-signature'
 import { ACTIVITYPUB_MEDIA_TYPE } from './activitypub.js'
-import { v4 as uuidv4 } from 'uuid'
 
 /**
  * async iterate the items in a remote Storage Collection via fetch
@@ -356,11 +355,12 @@ class SpaceFetched implements ISpace {
   //   }
   // }
   resource (resourcePathParam?: string, options: {
-    signer?: ISigner
+    signer?: ISigner,
+    uuid?: UrnUuid
   } = {}) {
     let resourcePath: `/${string}`
     if (typeof resourcePathParam === 'undefined') {
-      resourcePath = `/${uuidv4()}` as const
+      resourcePath = `/${options.uuid || crypto.randomUUID}` as const
     } else if (typeof resourcePathParam === 'string') {
       if (resourcePathParam.startsWith('/')) {
         resourcePath = resourcePathParam as `/${string}`
@@ -564,7 +564,7 @@ class StorageFetched implements IStorageClient {
       }
     } else if (typeof optionsOrId === 'object' || !optionsOrId) {
       options = {
-        id: optionsOrId?.id || `urn:uuid:${uuidv4()}`,
+        id: optionsOrId?.id || `urn:uuid:${crypto.randomUUID()}` as UrnUuid,
         ...optionsOrId
       }
     } else {

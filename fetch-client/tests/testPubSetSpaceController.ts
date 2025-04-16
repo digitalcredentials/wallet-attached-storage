@@ -11,7 +11,6 @@ import { getControllerOfDidKeyVerificationMethod } from "../did-key.js"
 import { fileURLToPath } from "url"
 import { StorageClient } from "../index.js"
 import assert from "assert"
-import { v4 as uuidv4 } from "uuid"
 
 /**
  * test a StorageClient to ensure it can update spaces
@@ -23,7 +22,8 @@ import { v4 as uuidv4 } from "uuid"
 export default async function testSetSpaceController(
   pub: IStorageClient,
   assert: typeof nodeAssert,
-  testing: Pick<typeof NodeTest,'test'>
+  testing: Pick<typeof NodeTest,'test'>,
+  uuid?: string,
 ) {
   const { test } = testing;
   await test('can put a resource with an http signature', async (t) => {
@@ -40,7 +40,7 @@ export default async function testSetSpaceController(
   */
    {
     // create space b
-    const spaceBUuid = uuidv4()
+    const spaceBUuid = uuid || crypto.randomUUID()
     const spaceBObject = {
       id: `urn:uuid:${spaceBUuid}` as UrnUuid,
     }
