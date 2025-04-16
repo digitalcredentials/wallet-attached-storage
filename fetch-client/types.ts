@@ -74,7 +74,10 @@ interface Postable {
  */
 export interface ISpace extends Getable, Putable, Deletable {
   id: UrnUuid
-  resource: (path?: string) => IResourceInSpace
+  resource: (path?: string, options?: {
+    signer?: ISigner
+    uuid?: UrnUuid
+  }) => IResourceInSpace
 }
 
 /**
