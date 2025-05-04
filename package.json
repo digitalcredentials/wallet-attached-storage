@@ -21,6 +21,12 @@
   "module": "dist/esm/index.js",
   "browser": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "default": "./dist/esm/index.js"
+    }
+  },
   "dependencies": {
     "@wallet.storage/fetch-client": "*"
   },
