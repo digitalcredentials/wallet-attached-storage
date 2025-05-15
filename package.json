@@ -1,7 +1,7 @@
 {
-  "name": "@did-coop/wallet-attached-storage",
+  "name": "@did.coop/wallet-attached-storage",
   "description": "A Typescript/Javascript isomorphic library template, for use in the browser, Node.js, and React Native.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "scripts": {
     "build": "npm run clear && tsc -d && tsc -p tsconfig.esm.json",
     "clear": "rimraf dist/*",

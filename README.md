@@ -1,7 +1,7 @@
-# Wallet Attached Storage Client _(@did-coop/wallet-attached-storage)_
+# Wallet Attached Storage Client _(@did.coop/wallet-attached-storage)_
 
 [![Build status](https://img.shields.io/github/actions/workflow/status/did-coop/wallet-attached-storage/main.yml?branch=main)](https://github.com/did-coop/wallet-attached-storage/actions?query=workflow%3A%22Node.js+CI%22)
-[![NPM Version](https://img.shields.io/npm/v/@did-coop/wallet-attached-storage.svg)](https://npm.im/@did-coop/wallet-attached-storage)
+[![NPM Version](https://img.shields.io/npm/v/@did.coop/wallet-attached-storage.svg)](https://npm.im/@did.coop/wallet-attached-storage)
 
 > A Wallet Attached Storage Javascript/TypeScript client for Node, browser and React Native.
 
@@ -16,7 +16,7 @@
 
 ## Background
 
-See in progress spec: https://did-coop.github.io/wallet-attached-storage-spec/
+See in progress spec: https://wallet.storage/spec
 
 ### App Identity and Key Management
 
@@ -54,7 +54,7 @@ TBD
 To install via NPM:
 
 ```
-npm install @did-coop/wallet-attached-storage
+npm install @did.coop/wallet-attached-storage
 ```
 
 ### Development
@@ -100,7 +100,7 @@ const appDidSigner = Ed25519Signer.fromJSON(loadedKeyPair)
 Create a Wallet Attached Storage Client, connect it to a remote url:
 
 ```ts
-import { WalletStorage } from '@did-coop/wallet-attached-storage'
+import { WalletStorage } from '@did.coop/wallet-attached-storage'
 
 const url = 'https://data.pub' // load this from config
 

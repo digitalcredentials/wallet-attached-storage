@@ -1,5 +1,9 @@
 # wallet-attached-storage Changelog
 
+## 0.4.0
+### Changed
+- **BREAKING**: Move back to `did.coop` from `did-coop` NPM org.
+
 ## 0.3.0
 
 ### Changed
