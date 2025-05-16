@@ -45,28 +45,6 @@ usage document, but roughly:
 
 TBD
 
-## Install
-
-- Node.js 18+ is recommended.
-
-### NPM
-
-To install via NPM:
-
-```
-npm install @did.coop/wallet-attached-storage
-```
-
-### Development
-
-To install locally (for development):
-
-```
-git clone https://github.com/did-coop/wallet-attached-storage.git
-cd wallet-attached-storage
-npm install
-```
-
 ## Usage
 
 This client assumes:
@@ -76,42 +54,100 @@ This client assumes:
   [App Identity and Key Management](#app-identity-and-key-management) section
   for more details.
 
-Example key pair generation (for an in-browser SPA), for persistence in local
-storage.
+### Creating a `did:key` Signer Instance
+
+Most W.A.S. HTTP operations (creating a space, creating collections, reading and
+writing resources) require authorization in the form of zCap invocations via
+[HTTP Signatures](https://www.npmjs.com/package/authorization-signature).
+
+The `fetch-client` in these examples automatically constructs the proper http
+headers, if you pass it a DID Signer object. A Signer is a minimal abstraction
+used to deal with a `did:key` and its associated key pair, with the interface of:
 
 ```ts
-import { Ed25519Signer } from '@did.coop/did-key-ed25519'
+interface ISigner {
+  id: string // Specifically, a did:key key id
+  sign: ({ data: Uint8Array }) => Promise<Uint8Array>
+}
+```
 
+Several DID-related libraries either provide signers directly, or it's fairly
+easy to construct them. Some examples:
+
+```ts
+import { Ed25519VerificationKey2020 }
+  from '@digitalcredentials/ed25519-verification-key-2020' // "^5.0.0-beta.2"
+
+const keyPair = await Ed25519VerificationKey2020.generate()
+keyPair.id = `did:key:${keyPair.fingerprint()}#${keyPair.fingerprint()}`
+
+const appDidSigner = keyPair.signer()
+```
+
+or:
+
+```ts
+import { Ed25519Signer } from '@did.coop/did-key-ed25519' // "^0.0.9"
 const appDidSigner = await Ed25519Signer.generate()
 ```
 
-Example storing and loading:
+### Provisioning a New Space
+
+Provision (create) a new space :
+
+```ts
+import { StorageClient } from '@wallet.storage/fetch-client' // "^1.1.2"
+
+const url = 'https://data.pub' // load this from config or env variable
+
+const storage = new StorageClient(new URL(url))
+const space = storage.space({ signer: appDidSigner })
+// Create a new space (sends HTTP API call)
+await space.put()
+
+// Save the space.id for later re-use
+const spaceId = space.id
+```
+
+### Persisting Key Pairs or Signers
+
+Some sample serialization and importing of keys (warning: not recommended for
+production use -- this is what HSMs are for).
 
 ```ts
 // Serialize to JSON for storage
+
+// If using @digitalcredentials/ed25519-verification-key-2020
+const exportedKeyPair = await keyPair.export({ publicKey: true, privateKey: true })
+
+// If using @did.coop/did-key-ed25519@0.0.9
 const exportedKeyPair = appDidSigner.toJSON()
+
 localStorage.setItem('app-DID', JSON.stringify(exportedKeyPair))
 
 // Load from storage and turn back into a DID Signer
-const loadedKeyPair = localStorage.getItem('app-DID')
-const appDidSigner = Ed25519Signer.fromJSON(loadedKeyPair)
+const serializedKeyPair = localStorage.getItem('app-DID')
+
+// If using @digitalcredentials/ed25519-verification-key-2020
+const keyPair = await Ed25519VerificationKey2020.from(serializedKeyPair)
+const appDidSigner = keyPair.signer()
+
+// If using @did.coop/did-key-ed25519@0.0.9
+const appDidSigner = Ed25519Signer.fromJSON(serializedKeyPair)
 ```
 
-Create a Wallet Attached Storage Client, connect it to a remote url:
+### Connecting to an Existing (provisioned) Space
 
 ```ts
-import { WalletStorage } from '@did.coop/wallet-attached-storage'
+import { StorageClient } from '@wallet.storage/fetch-client'
 
-const url = 'https://data.pub' // load this from config
+const url = 'https://data.pub' // load this from config or env variable
 
-let storage
-try {
-  storage = WalletStorage.connect({ url, signer: appDidSigner })
-} catch (e) {
-  console.error('Error connecting:', e)
-  throw e
-}
+const storage = new StorageClient(new URL(url))
+const space = storage.space({ signer: appDidSigner, id: spaceId })
 ```
+
+### Reading and Writing
 
 Now you can read and write resources to and from collections:
 
