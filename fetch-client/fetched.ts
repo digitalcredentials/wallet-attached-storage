@@ -7,19 +7,26 @@ import type { UrnUuid } from './urn-uuid.js'
 import { createHttpSignatureAuthorization } from 'authorization-signature'
 import { ACTIVITYPUB_MEDIA_TYPE } from './activitypub.js'
 
-/**
- * async iterate the items in a remote Storage Collection via fetch
- * @param options - optional arguments
- * @param options.path - Storage path of collection
- * @param options.fetch - Fetch API instance to use to send requests
- * @param options.signer - will sign requests (e.g. with a digital signature algorithm)
- * @yields {{name:string,url:string}} Use this to iterate each item in the collection
- */
-async function * iterateCollectionItems (options: {
-  path: `/space/${string}/resource/${string}`
-  fetch: typeof globalThis.fetch
-  signer?: ISigner
-}) {
+const defaultIncludeHeaders = [
+  '(created)',
+  '(expires)',
+  '(key-id)',
+  '(request-target)',
+]
+
+  /**
+   * async iterate the items in a remote Storage Collection via fetch
+   * @param options - optional arguments
+   * @param options.path - Storage path of collection
+   * @param options.fetch - Fetch API instance to use to send requests
+   * @param options.signer - will sign requests (e.g. with a digital signature algorithm)
+   * @yields {{name:string,url:string}} Use this to iterate each item in the collection
+   */
+  async function* iterateCollectionItems(options: {
+    path: `/space/${string}/resource/${string}`
+    fetch: typeof globalThis.fetch
+    signer?: ISigner
+  }) {
   const headers = {}
   const method = 'GET' as const
   const location = options.path
@@ -29,8 +36,9 @@ async function * iterateCollectionItems (options: {
       signer,
       method,
       headers,
-      includeHeaders: [],
+      includeHeaders: defaultIncludeHeaders,
       created: new Date(),
+      expires: new Date(Date.now() + 30 * 1000),
       url: new URL(
         location,
         // the host will not be used in the authorization
@@ -68,7 +76,7 @@ async function * iterateCollectionItems (options: {
     })
   }
   const collection = initialCollectionSafeParsed.data
-  yield * collection.items
+  yield* collection.items
 }
 
 export class StorageURLPath {
@@ -77,11 +85,11 @@ export class StorageURLPath {
     resourcePath: string
   }
 
-  constructor (path: string) {
+  constructor(path: string) {
     this.#parsed = parsePath(path)
   }
 
-  toString (): `/space/${string}/resource/${string}` {
+  toString(): `/space/${string}/resource/${string}` {
     return `${this.#parsed.spacePath}/resource/${this.#parsed.resourcePath}` as const
   }
 }
@@ -95,7 +103,7 @@ export class StorageURLPath {
  * @throws if unable to parse resource path to space path
  * @throws if unable to parse resource path to resource path within space
  */
-function parsePath<SpaceUUID extends string, ResourcePath extends string> (resource: `/space/${SpaceUUID}/resource/${ResourcePath}` | string): { spacePath: `/space/${SpaceUUID}`, resourcePath: ResourcePath } {
+function parsePath<SpaceUUID extends string, ResourcePath extends string>(resource: `/space/${SpaceUUID}/resource/${ResourcePath}` | string): { spacePath: `/space/${SpaceUUID}`, resourcePath: ResourcePath } {
   const match = resource.match(/(?<spacePath>\/space\/[^/]+)(?<resourcePath>.*)/)
   if (match == null) {
     throw new Error('unable to parse space path from resource path', {
@@ -122,7 +130,7 @@ class ResourceFetched implements IResourceInSpace {
   #fetch: typeof globalThis.fetch
   path: `/space/${string}/resource/${string}`
   #signer?: ISigner
-  constructor (options: {
+  constructor(options: {
     path: `/space/${string}/resource/${string}`
     fetch: typeof globalThis.fetch
     signer?: ISigner
@@ -132,7 +140,7 @@ class ResourceFetched implements IResourceInSpace {
     this.#signer = options.signer
   }
 
-  async get (options: {
+  async get(options: {
     signer?: ISigner
   } = {}): Promise<IResponse | ErrorResponse> {
     const headers = {}
@@ -144,8 +152,9 @@ class ResourceFetched implements IResourceInSpace {
         signer,
         method,
         headers,
-        includeHeaders: [],
+        includeHeaders: defaultIncludeHeaders,
         created: new Date(),
+        expires: new Date(Date.now() + 30 * 1000),
         url: new URL(
           location,
           // the host will not be used in the authorization
@@ -163,14 +172,14 @@ class ResourceFetched implements IResourceInSpace {
     const got: IResponse = {
       status: response.status,
       ok: response.ok,
-      async blob () { return await response.clone().blob() },
-      async json () { return await response.clone().json() },
+      async blob() { return await response.clone().blob() },
+      async json() { return await response.clone().json() },
       headers: response.headers
     }
     return got
   }
 
-  async post (blob?: Blob, options: {
+  async post(blob?: Blob, options: {
     signer?: ISigner
   } = {}) {
     const headers = {}
@@ -182,8 +191,9 @@ class ResourceFetched implements IResourceInSpace {
         signer,
         method,
         headers,
-        includeHeaders: [],
+        includeHeaders: defaultIncludeHeaders,
         created: new Date(),
+        expires: new Date(Date.now() + 30 * 1000),
         url: new URL(
           location,
           // the host will not be used in the authorization
@@ -203,12 +213,12 @@ class ResourceFetched implements IResourceInSpace {
       ok: response.ok,
       headers: Array.from(response.headers),
       status: response.status,
-      async blob () { return await response.clone().blob() },
-      async json () { return await response.clone().json() }
+      async blob() { return await response.clone().blob() },
+      async json() { return await response.clone().json() }
     }
   }
 
-  async put (blob?: Blob, options: {
+  async put(blob?: Blob, options: {
     signer?: ISigner
   } = {}) {
     const headers = {}
@@ -220,8 +230,9 @@ class ResourceFetched implements IResourceInSpace {
         signer,
         method,
         headers,
-        includeHeaders: [],
+        includeHeaders: defaultIncludeHeaders,
         created: new Date(),
+        expires: new Date(Date.now() + 30 * 1000),
         url: new URL(
           location,
           // the host will not be used in the authorization
@@ -241,12 +252,12 @@ class ResourceFetched implements IResourceInSpace {
       ok: response.ok,
       headers: Array.from(response.headers),
       status: response.status,
-      async blob () { return await response.clone().blob() },
-      async json () { return await response.clone().json() }
+      async blob() { return await response.clone().blob() },
+      async json() { return await response.clone().json() }
     }
   }
 
-  async delete (options: {
+  async delete(options: {
     signer?: ISigner
   } = {}) {
     const headers = {}
@@ -258,8 +269,9 @@ class ResourceFetched implements IResourceInSpace {
         signer,
         method,
         headers,
-        includeHeaders: [],
+        includeHeaders: defaultIncludeHeaders,
         created: new Date(),
+        expires: new Date(Date.now() + 30 * 1000),
         url: new URL(
           location,
           // the host will not be used in the authorization
@@ -286,7 +298,7 @@ class SpaceFetched implements ISpace {
 
   // #added: Promise<void>
   #signer?: ISigner
-  constructor (options: {
+  constructor(options: {
     space: string
     fetch: typeof globalThis.fetch
     signer?: ISigner
@@ -319,7 +331,7 @@ class SpaceFetched implements ISpace {
   //         signer,
   //         method,
   //         headers,
-  //         includeHeaders: [],
+  //         includeHeaders: defaultIncludeHeaders,
   //         created: new Date,
   //         url: new URL(
   //           location,
@@ -354,7 +366,7 @@ class SpaceFetched implements ISpace {
   //       })
   //   }
   // }
-  resource (resourcePathParam?: string, options: {
+  resource(resourcePathParam?: string, options: {
     signer?: ISigner,
     uuid?: UrnUuid
   } = {}) {
@@ -379,22 +391,22 @@ class SpaceFetched implements ISpace {
     })
   }
 
-  get id () {
+  get id() {
     return this.#space.id
   }
 
-  get uuid () {
+  get uuid() {
     return parseUrnUuid(this.id).uuid
   }
 
-  get path () {
+  get path() {
     return `/space/${this.uuid}` as const
   }
 
   // get added() {
   //   return this.#added
   // }
-  async get (options: ISignedRequestOptions = {}): Promise<IResponse> {
+  async get(options: ISignedRequestOptions = {}): Promise<IResponse> {
     const headers = {}
     const method = 'GET' as const
     const location = this.path
@@ -404,8 +416,9 @@ class SpaceFetched implements ISpace {
         signer,
         method,
         headers,
-        includeHeaders: [],
+        includeHeaders: defaultIncludeHeaders,
         created: new Date(),
+        expires: new Date(Date.now() + 30 * 1000),
         url: new URL(
           location,
           // the host will not be used in the authorization
@@ -428,7 +441,7 @@ class SpaceFetched implements ISpace {
       blob: async () => {
         return await response.clone().blob()
       },
-      async json () {
+      async json() {
         const text = await response.clone().text()
         return JSON.parse(text)
       }
@@ -436,7 +449,7 @@ class SpaceFetched implements ISpace {
     return r
   }
 
-  async delete (options: ISignedRequestOptions = {}) {
+  async delete(options: ISignedRequestOptions = {}) {
     const headers = {}
     const method = 'DELETE' as const
     const location = this.path
@@ -446,8 +459,9 @@ class SpaceFetched implements ISpace {
         signer,
         method,
         headers,
-        includeHeaders: [],
+        includeHeaders: defaultIncludeHeaders,
         created: new Date(),
+        expires: new Date(Date.now() + 30 * 1000),
         url: new URL(
           location,
           // the host will not be used in the authorization
@@ -466,7 +480,7 @@ class SpaceFetched implements ISpace {
     return response
   }
 
-  async post (blob: Blob, options?: ISignedRequestOptions): Promise<IResponse> {
+  async post(blob: Blob, options?: ISignedRequestOptions): Promise<IResponse> {
     const headers = {}
     const method = 'POST' as const
     const location = this.path
@@ -476,8 +490,9 @@ class SpaceFetched implements ISpace {
         signer,
         method,
         headers,
-        includeHeaders: [],
+        includeHeaders: defaultIncludeHeaders,
         created: new Date(),
+        expires: new Date(Date.now() + 30 * 1000),
         url: new URL(
           location,
           // the host will not be used in the authorization
@@ -498,7 +513,7 @@ class SpaceFetched implements ISpace {
     return response
   }
 
-  async put (blob?: Blob, options?: ISignedRequestOptions): Promise<IResponse> {
+  async put(blob?: Blob, options?: ISignedRequestOptions): Promise<IResponse> {
     const headers = {}
     const method = 'PUT' as const
     const location = this.path
@@ -508,8 +523,9 @@ class SpaceFetched implements ISpace {
         signer,
         method,
         headers,
-        includeHeaders: [],
+        includeHeaders: defaultIncludeHeaders,
         created: new Date(),
+        expires: new Date(Date.now() + 30 * 1000),
         url: new URL(
           location,
           // the host will not be used in the authorization
@@ -535,7 +551,7 @@ type FetchPath = (path: string, init: RequestInit) => Promise<Response>
 
 class StorageFetched implements IStorageClient {
   #fetch: typeof globalThis.fetch
-  constructor (options: URL | {
+  constructor(options: URL | {
     fetch: typeof globalThis.fetch
   }) {
     if (options instanceof URL) {
@@ -551,7 +567,7 @@ class StorageFetched implements IStorageClient {
     }
   }
 
-  space (optionsOrId?: Parameters<IStorageClient['space']>[0]) {
+  space(optionsOrId?: Parameters<IStorageClient['space']>[0]) {
     let options: {
       id: UrnUuid
       signer?: ISigner
