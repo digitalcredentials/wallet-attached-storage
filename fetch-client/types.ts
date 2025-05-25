@@ -88,7 +88,7 @@ export interface IResourceInSpace extends Getable, Putable, Deletable, Postable 
    * path that names the location within the space
    * at which this resource is found.
    */
-  path: `/space/${string}/resource/${string}`
+  path: `/space/${string}/${string}`
 }
 
 /**

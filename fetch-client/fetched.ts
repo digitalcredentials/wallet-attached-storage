@@ -23,7 +23,7 @@ const defaultIncludeHeaders = [
    * @yields {{name:string,url:string}} Use this to iterate each item in the collection
    */
   async function* iterateCollectionItems(options: {
-    path: `/space/${string}/resource/${string}`
+    path: `/space/${string}/${string}`
     fetch: typeof globalThis.fetch
     signer?: ISigner
   }) {
@@ -89,8 +89,8 @@ export class StorageURLPath {
     this.#parsed = parsePath(path)
   }
 
-  toString(): `/space/${string}/resource/${string}` {
-    return `${this.#parsed.spacePath}/resource/${this.#parsed.resourcePath}` as const
+  toString(): `/space/${string}/${string}` {
+    return `${this.#parsed.spacePath}/${this.#parsed.resourcePath}` as const
   }
 }
 
@@ -103,7 +103,7 @@ export class StorageURLPath {
  * @throws if unable to parse resource path to space path
  * @throws if unable to parse resource path to resource path within space
  */
-function parsePath<SpaceUUID extends string, ResourcePath extends string>(resource: `/space/${SpaceUUID}/resource/${ResourcePath}` | string): { spacePath: `/space/${SpaceUUID}`, resourcePath: ResourcePath } {
+function parsePath<SpaceUUID extends string, ResourcePath extends string>(resource: `/space/${SpaceUUID}/${ResourcePath}` | string): { spacePath: `/space/${SpaceUUID}`, resourcePath: ResourcePath } {
   const match = resource.match(/(?<spacePath>\/space\/[^/]+)(?<resourcePath>.*)/)
   if (match == null) {
     throw new Error('unable to parse space path from resource path', {
@@ -128,10 +128,10 @@ function parsePath<SpaceUUID extends string, ResourcePath extends string>(resour
 class ResourceFetched implements IResourceInSpace {
   type = 'Resource' as const
   #fetch: typeof globalThis.fetch
-  path: `/space/${string}/resource/${string}`
+  path: `/space/${string}/${string}`
   #signer?: ISigner
   constructor(options: {
-    path: `/space/${string}/resource/${string}`
+    path: `/space/${string}/${string}`
     fetch: typeof globalThis.fetch
     signer?: ISigner
   }) {
@@ -383,7 +383,7 @@ class SpaceFetched implements ISpace {
       throw new Error('unexpected resource path parameter', { cause: { resourcePathParam } })
     }
     const signer = options.signer ?? this.#signer
-    const path = `${this.path}/resource${resourcePath}` as const
+    const path = `${this.path}${resourcePath}` as const
     return new ResourceFetched({
       fetch: this.#fetch,
       path,
