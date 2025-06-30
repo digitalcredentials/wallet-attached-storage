@@ -44,7 +44,8 @@ export interface IResponse {
  * options for building a signed request.
  */
 export interface ISignedRequestOptions {
-  signer?: ISigner
+  signer?: ISigner,
+  headers?: Record<string, string>
 }
 
 export type ErrorResponse =

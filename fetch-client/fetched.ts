@@ -140,10 +140,8 @@ class ResourceFetched implements IResourceInSpace {
     this.#signer = options.signer
   }
 
-  async get(options: {
-    signer?: ISigner
-  } = {}): Promise<IResponse | ErrorResponse> {
-    const headers = {}
+  async get(options: ISignedRequestOptions = {}): Promise<IResponse | ErrorResponse> {
+    const headers = options.headers ?? {}
     const method = 'GET' as const
     const location = this.path
     const signer = options.signer ?? this.#signer
@@ -219,9 +217,10 @@ class ResourceFetched implements IResourceInSpace {
   }
 
   async put(blob?: Blob, options: {
-    signer?: ISigner
+    signer?: ISigner,
+    headers?: Record<string, string>
   } = {}) {
-    const headers = {}
+    const headers = options.headers ?? {}
     const method = 'PUT' as const
     const location = this.path
     const signer = options.signer ?? this.#signer
@@ -258,9 +257,10 @@ class ResourceFetched implements IResourceInSpace {
   }
 
   async delete(options: {
-    signer?: ISigner
+    signer?: ISigner,
+    headers?: Record<string, string>
   } = {}) {
-    const headers = {}
+    const headers = options.headers ?? {}
     const method = 'DELETE' as const
     const location = this.path
     const signer = options.signer ?? this.#signer
@@ -407,10 +407,11 @@ class SpaceFetched implements ISpace {
   //   return this.#added
   // }
   async get(options: ISignedRequestOptions = {}): Promise<IResponse> {
-    const headers = {}
+    const headers = options?.headers ?? {}
     const method = 'GET' as const
     const location = this.path
     const signer = options.signer ?? this.#signer
+    console.log('🚀 ~ SpaceFetched ~ get ~ headers:', headers)
     const authorization = (signer != null)
       ? await createHttpSignatureAuthorization({
         signer,
@@ -450,7 +451,7 @@ class SpaceFetched implements ISpace {
   }
 
   async delete(options: ISignedRequestOptions = {}) {
-    const headers = {}
+    const headers = options.headers ?? {}
     const method = 'DELETE' as const
     const location = this.path
     const signer = options.signer ?? this.#signer
@@ -481,7 +482,7 @@ class SpaceFetched implements ISpace {
   }
 
   async post(blob: Blob, options?: ISignedRequestOptions): Promise<IResponse> {
-    const headers = {}
+    const headers = options?.headers ?? {}
     const method = 'POST' as const
     const location = this.path
     const signer = options?.signer ?? this.#signer
@@ -514,7 +515,7 @@ class SpaceFetched implements ISpace {
   }
 
   async put(blob?: Blob, options?: ISignedRequestOptions): Promise<IResponse> {
-    const headers = {}
+    const headers = options?.headers ?? {}
     const method = 'PUT' as const
     const location = this.path
     const signer = options?.signer ?? this.#signer
