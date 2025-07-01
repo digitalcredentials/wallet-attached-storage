@@ -411,7 +411,6 @@ class SpaceFetched implements ISpace {
     const method = 'GET' as const
     const location = this.path
     const signer = options.signer ?? this.#signer
-    console.log('🚀 ~ SpaceFetched ~ get ~ headers:', headers)
     const authorization = (signer != null)
       ? await createHttpSignatureAuthorization({
         signer,
