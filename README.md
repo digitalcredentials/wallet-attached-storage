@@ -209,6 +209,8 @@ To download / export all the resources in a space (in TARball format):
   const fileName = `was-space-${spaceId.split('urn:uuid:')[1]}.tar`;
 
   // Create a write stream from the blob as appropriate to your platform
+  // For example, using the NPM `tar-stream` package:
+  // https://www.npmjs.com/package/tar-stream#extracting
 ```
 
 ## Contribute
