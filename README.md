@@ -16,7 +16,7 @@
 
 ## Background
 
-See in progress spec: https://wallet.storage/spec
+See in progress spec: https://digitalcredentials.github.io/wallet-attached-storage-spec/
 
 ### App Identity and Key Management
 
@@ -147,30 +147,68 @@ const storage = new StorageClient(new URL(url))
 const space = storage.space({ signer: appDidSigner, id: spaceId })
 ```
 
-### Reading and Writing
+### Creating Resources
 
-Now you can read and write resources to and from collections:
+Now you can write resources to the space.
+Example creating a VC (verifiable credential):
 
 ```ts
-// Create a reference to the Credentials collection (note that no API calls are
-//   made yet)
-const credentials = storage.collection('credentials')
+import { v4 as uuidv4 } from 'uuid';
 
-// Iterate through the collection, fetch the resources
-for await (const resource of credentials) {
-  const response = await resource.get()
-  const vc = await response.json()
-  console.log(JSON.stringify(vc, null, 2))
+// Create or load a signer
+// Create a spaceId or load an existing spaceId
+
+const space = storage.space({
+  signer,
+  id: spaceId
+});
+
+// Get a reference to a resource path
+const resourceUUID = uuidv4();
+const resource = space.resource(resourceUUID);
+console.log('Resource path:', resource.path);
+
+// Create the credential blob with correct content type
+const credentialBlob = new Blob([JSON.stringify(credential)], {
+  type: 'application/json'
+});
+// Issue the HTTP API call to write the resource
+const response = await resource.put(credentialBlob, {
+  signer
+});
+console.log('WAS storage response:', {
+  status: response.status,
+  ok: response.ok
+});
+if (!response.ok) {
+  console.error(
+    '[publicLink.ts] Failed to store credential in WAS. Status:',
+    response.status
+  );
 }
+```
 
-// Upload a VC
-await credentials.resource().put(
-  new Blob(JSON.stringify(vc), { type: 'application/vc' })
-)
+### Exporting Space contents for Backup
 
-// Upload Evidence / Documents
-await storage.collection('documents')
-  .resource().put(getDocumentBlob())
+To download / export all the resources in a space (in TARball format):
+
+```ts
+// Assuming you have a space object, see above
+
+  const response = await space.get({
+    headers: {
+      Accept: 'application/x-tar'
+    }
+  });
+
+  if (!response.ok) throw new Error(`Failed to export space. Status: ${response.status}`);
+
+  const blob = await response.blob?.();
+  if (!blob) throw new Error('Failed to get blob from response');
+
+  const fileName = `was-space-${spaceId.split('urn:uuid:')[1]}.tar`;
+
+  // Create a write stream from the blob as appropriate to your platform
 ```
 
 ## Contribute
