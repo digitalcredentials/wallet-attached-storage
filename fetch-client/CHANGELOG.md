@@ -1,5 +1,10 @@
 # @data.pub/fetch-client
 
+## 1.3.0
+
+### Added
+- Add `headers` parameter to `get` call, to aid with Export and other methods.
+
 ## 1.2.0
 
 ### Minor Changes
