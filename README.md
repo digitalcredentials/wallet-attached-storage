@@ -1,6 +1,5 @@
 # Wallet Attached Storage Client _(@did.coop/wallet-attached-storage)_
 
-[![Build status](https://img.shields.io/github/actions/workflow/status/did-coop/wallet-attached-storage/main.yml?branch=main)](https://github.com/did-coop/wallet-attached-storage/actions?query=workflow%3A%22Node.js+CI%22)
 [![NPM Version](https://img.shields.io/npm/v/@did.coop/wallet-attached-storage.svg)](https://npm.im/@did.coop/wallet-attached-storage)
 
 > A Wallet Attached Storage Javascript/TypeScript client for Node, browser and React Native.
