@@ -15,7 +15,11 @@
 
 ## Background
 
-See in progress spec: https://digitalcredentials.github.io/wallet-attached-storage-spec/
+**Latest Spec Draft**: https://digitalcredentials.github.io/wallet-attached-storage-spec/
+
+**Example Server Implementation:** https://github.com/digitalcredentials/wallet-attached-storage-server/
+
+**zCap (Authorization Capabilities) Developer's Guide**: https://github.com/interop-alliance/zcap-developer-guide
 
 ### App Identity and Key Management
 
@@ -49,9 +53,10 @@ TBD
 This client assumes:
 
 * a remote Wallet Attached Storage server is available
-* the app is able to create and store a public-private key pair, see the
-  [App Identity and Key Management](#app-identity-and-key-management) section
-  for more details.
+* the (Relying Party) app is able to create and store a public-private key pair,
+  see the [App Identity and Key Management](#app-identity-and-key-management)
+  section for more details.
+*
 
 ### Creating a `did:key` Signer Instance
 
@@ -81,13 +86,6 @@ const keyPair = await Ed25519VerificationKey2020.generate()
 keyPair.id = `did:key:${keyPair.fingerprint()}#${keyPair.fingerprint()}`
 
 const appDidSigner = keyPair.signer()
-```
-
-or:
-
-```ts
-import { Ed25519Signer } from '@did.coop/did-key-ed25519' // "^0.0.9"
-const appDidSigner = await Ed25519Signer.generate()
 ```
 
 ### Provisioning a New Space
@@ -135,6 +133,12 @@ const appDidSigner = keyPair.signer()
 const appDidSigner = Ed25519Signer.fromJSON(serializedKeyPair)
 ```
 
+### Provisioning a New Space
+
+See:
+* HTTP API call: https://digitalcredentials.github.io/wallet-attached-storage-spec/#http-api-post-spaces
+* [LCW implementation example](https://github.com/openwallet-foundation-labs/learner-credential-wallet/blob/main/app/screens/WAS/WasScreen.tsx#L120)
+
 ### Connecting to an Existing (provisioned) Space
 
 ```ts
@@ -147,6 +151,10 @@ const space = storage.space({ signer: appDidSigner, id: spaceId })
 ```
 
 ### Creating Resources
+
+See also:
+* [HTTP API spec section](https://digitalcredentials.github.io/wallet-attached-storage-spec/#http-api-put-spaces-space_id-collection-resource_name)
+* [LCW Implementation example](https://github.com/openwallet-foundation-labs/learner-credential-wallet/blob/main/app/lib/publicLink.ts#L88-L115)
 
 Now you can write resources to the space.
 Example creating a VC (verifiable credential):
